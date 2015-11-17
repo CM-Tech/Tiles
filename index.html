@@ -1,0 +1,336 @@
+<html>
+
+    <head>
+        <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.2/jquery.min.js"></script>
+        <link rel="stylesheet" href="//maxcdn.bootstrapcdn.com/bootstrap/3.2.0/css/bootstrap.min.css">
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/underscore.js/1.8.2/underscore-min.js"></script>
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/jqueryui/1.11.2/jquery-ui.min.js"></script>
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/gridstack.js/0.2.2/gridstack.min.js"></script>
+        <link href="https://cdnjs.cloudflare.com/ajax/libs/gridstack.js/0.2.2/gridstack.min.css" rel="stylesheet">
+        <link href="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/3.3.4/css/bootstrap.css" rel="stylesheet">
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery.simpleWeather/3.0.2/jquery.simpleWeather.min.js"></script>
+
+        <link href="//netdna.bootstrapcdn.com/font-awesome/4.0.3/css/font-awesome.min.css" rel="stylesheet">
+        <link rel="stylesheet" href="gridStack.css">
+        <script src="gridStack.js"></script>
+        <!-- Compiled and minified CSS -->
+        <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/materialize/0.97.2/css/materialize.min.css">
+
+        <!-- Compiled and minified JavaScript -->
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/materialize/0.97.2/js/materialize.min.js"></script>
+        <link rel="stylesheet" href="weather.css">
+    </head>
+
+    <body class="black">
+        <div class="grid-stack">
+            <div class="grid-stack-item" data-gs-x="8" data-gs-y="4" data-gs-width="2" data-gs-height="2">
+                <div class="grid-stack-item-content red"></div>
+            </div>
+            <div class="grid-stack-item" data-gs-x="0" data-gs-y="1" data-gs-width="2" data-gs-height="2">
+                <div class="grid-stack-item-content green"></div>
+            </div>
+            <div class="grid-stack-item" data-gs-x="2" data-gs-y="2" data-gs-width="2" data-gs-height="4">
+                <div class="grid-stack-item-content blue"></div>
+            </div>
+            <div class="grid-stack-item" data-gs-x="0" data-gs-y="2" data-gs-width="2" data-gs-height="4">
+                <div class="grid-stack-item-content yellow"></div>
+            </div>
+            <div class="grid-stack-item" data-gs-x="2" data-gs-y="4" data-gs-width="4" data-gs-height="2">
+                <div class="grid-stack-item-content orange"></div>
+            </div>
+            <div class="grid-stack-item" data-gs-x="8" data-gs-y="2" data-gs-width="4" data-gs-height="2">
+                <div class="grid-stack-item-content pink"></div>
+            </div>
+            
+            <div class="grid-stack-item" data-gs-x="4" data-gs-y="2" data-gs-width="4" data-gs-height="4">
+                <div class="grid-stack-item-content white"><article class="clock simple">
+  <div class="hours-container">
+    <div class="hours"></div>
+  </div>
+  <div class="minutes-container">
+    <div class="minutes"></div>
+  </div>
+  <div class="seconds-container">
+    <div class="seconds"></div>
+  </div>
+</article></div>
+            </div>
+             <div class="grid-stack-item" data-gs-x="6" data-gs-y="4" data-gs-width="6" data-gs-height="2">
+                <div class="grid-stack-item-content teal"><div id="weather"></div></div>
+            </div>
+            <div class="grid-stack-item" data-gs-x="10" data-gs-y="2" data-gs-width="2" data-gs-height="2">
+                <div class="grid-stack-item-content purple"></div>
+            </div>
+        </div>
+
+        <script>
+            function shadeRGBColor(color, percent) {
+                var f = color.split(","),
+                    t = percent < 0 ? 0 : 255,
+                    p = percent < 0 ? percent * -1 : percent,
+                    R = parseInt(f[0].slice(4)),
+                    G = parseInt(f[1]),
+                    B = parseInt(f[2]);
+                return "rgb(" + (Math.round((t - R) * p) + R) + "," + (Math.round((t - G) * p) + G) + "," + (Math.round((t - B) * p) + B) + ")";
+            }
+
+            function blendRGBColors(c0, c1, p) {
+                var f = c0.split(","),
+                    t = c1.split(","),
+                    R = parseInt(f[0].slice(4)),
+                    G = parseInt(f[1]),
+                    B = parseInt(f[2]);
+                return "rgb(" + (Math.round((parseInt(t[0].slice(4)) - R) * p) + R) + "," + (Math.round((parseInt(t[1]) - G) * p) + G) + "," + (Math.round((parseInt(t[2]) - B) * p) + B) + ")";
+            }
+            var options = {
+                cell_height: 70,
+                vertical_margin: 0
+            };
+            $('.grid-stack').gridstack(options);
+            var grid = $('.grid-stack').data('gridstack');
+            grid.cell_width(grid.cell_height());
+            grid.resizable('.grid-stack-item', false);
+            var cells = $(".grid-stack-item-content");
+            for (var i = 0; i < cells.length; i++) {
+                //console.log( $(cells[i]).css("background-color"));
+                var f = $(cells[i]).css("background-color").split(","),
+                    R = parseInt(f[0].slice(4)),
+                    G = parseInt(f[1]),
+                    B = parseInt(f[2]);
+                cells[i].style.boxShadow = '3px 3px 0px ' + blendRGBColors($(cells[i]).css("background-color"), "rgb(0,0,0)", 0.5);
+            }
+        </script>
+    </body>
+    <style>
+        .grid-stack {
+            width:100%;
+            margin-left:0;
+        }
+        .grid-stack-item-content {
+        }
+        .clock {
+  border-radius: 50%;
+  background: #fff url(https://cssanimation.rocks/assets/images/posts/clocks/ios_clock.svg) no-repeat center;
+  background-size: 88%;
+  gpadding-bottom: 31%;
+  position: relative;
+  width:240px;
+  height:240px;
+  margin-left:calc( 50% - 120px );
+  margin-top:calc( 50% - 120px );
+  overflow:hidden;
+}
+
+.clock.simple:after {
+  background: #000;
+  border-radius: 50%;
+  content: "";
+  position: absolute;
+  left: 50%;
+  top: 50%;
+  transform: translate(-50%, -50%);
+  width: 5%;
+  height: 5%;
+  z-index: 10;
+}
+.minutes-container, .hours-container, .seconds-container {
+  position: absolute;
+  top: 0;
+  right: 0;
+  bottom: 0;
+  left: 0;
+}
+.hours {
+  background: #000;
+  height: 20%;
+  left: 48.75%;
+  position: absolute;
+  top: 30%;
+  transform-origin: 50% 100%;
+  width: 2.5%;
+  border-radius:10px;
+}
+.minutes {
+  background: #000;
+  height: 35%;
+  left: 49%;
+  position: absolute;
+  top: 15%;
+  transform-origin: 50% 100%;
+  width: 2%;
+  border-radius:10px;
+}
+.seconds {
+  background: #000;
+  height: 45%;
+  left: 49.5%;
+  position: absolute;
+  top: 14%;
+  transform-origin: 50% 80%;
+  width: 1%;
+  z-index: 8;
+  border-radius:10px;
+}
+@keyframes rotate {
+  100% {
+    transform: rotateZ(360deg);
+  }
+}
+.hours-container {
+  animation: rotate 43200s infinite linear;
+}
+.minutes-container {
+  transition: transform 0.3s cubic-bezier(.4,2.08,.55,.44);
+}
+.seconds-container {
+  transition: transform 0.2s cubic-bezier(.4,2.08,.55,.44);
+}
+.temp{
+    vertical-align:middle;
+}
+#weather .weth-row{
+    vertical-align:middle;
+    padding:5px;
+}
+    </style>
+    <script>
+        /*
+ * Starts any clocks using the user's local time
+ * From: cssanimation.rocks/clocks
+ */
+function initLocalClocks() {
+  // Get the local time using JS
+  var date = new Date;
+  var seconds = date.getSeconds();
+  var minutes = date.getMinutes();
+  var hours = date.getHours();
+
+  // Create an object with each hand and it's angle in degrees
+  var hands = [
+    {
+      hand: 'hours',
+      angle: (hours * 30) + (minutes / 2)
+    },
+    {
+      hand: 'minutes',
+      angle: (minutes * 6)
+    },
+    {
+      hand: 'seconds',
+      angle: (seconds * 6)
+    }
+  ];
+  // Loop through each of these hands to set their angle
+  for (var j = 0; j < hands.length; j++) {
+    var elements = document.querySelectorAll('.' + hands[j].hand);
+    for (var k = 0; k < elements.length; k++) {
+        elements[k].style.webkitTransform = 'rotateZ('+ hands[j].angle +'deg)';
+        elements[k].style.transform = 'rotateZ('+ hands[j].angle +'deg)';
+        // If this is a minute hand, note the seconds position (to calculate minute position later)
+        if (hands[j].hand === 'minutes') {
+          elements[k].parentNode.setAttribute('data-second-angle', hands[j + 1].angle);
+        }
+    }
+  }
+}
+/*
+ * Set a timeout for the first minute hand movement (less than 1 minute), then rotate it every minute after that
+ */
+function setUpMinuteHands() {
+  // Find out how far into the minute we are
+  var containers = document.querySelectorAll('.minutes-container');
+  var secondAngle = containers[0].getAttribute("data-second-angle");
+  if (secondAngle > 0) {
+    // Set a timeout until the end of the current minute, to move the hand
+    var delay = (((360 - secondAngle) / 6) + 0.1) * 1000;
+    setTimeout(function() {
+      moveMinuteHands(containers);
+    }, delay);
+  }
+}
+
+/*
+ * Do the first minute's rotation
+ */
+function moveMinuteHands(containers) {
+  for (var i = 0; i < containers.length; i++) {
+    containers[i].style.webkitTransform = 'rotateZ(6deg)';
+    containers[i].style.transform = 'rotateZ(6deg)';
+  }
+  // Then continue with a 60 second interval
+  setInterval(function() {
+    for (var i = 0; i < containers.length; i++) {
+      if (containers[i].angle === undefined) {
+        containers[i].angle = 12;
+      } else {
+        containers[i].angle += 6;
+      }
+      containers[i].style.webkitTransform = 'rotateZ('+ containers[i].angle +'deg)';
+      containers[i].style.transform = 'rotateZ('+ containers[i].angle +'deg)';
+    }
+  }, 60000);
+}
+/*
+ * Move the second containers
+ */
+function moveSecondHands() {
+  var containers = document.querySelectorAll('.seconds-container');
+  setInterval(function() {
+    for (var i = 0; i < containers.length; i++) {
+      if (containers[i].angle === undefined) {
+        containers[i].angle = 6;
+      } else {
+        containers[i].angle += 6;
+      }
+      containers[i].style.webkitTransform = 'rotateZ('+ containers[i].angle +'deg)';
+      containers[i].style.transform = 'rotateZ('+ containers[i].angle +'deg)';
+    }
+  }, 1000);
+}
+initLocalClocks();
+setUpMinuteHands();
+moveSecondHands();
+var loc='Austin, TX';
+if ("geolocation" in navigator) {
+  navigator.geolocation.getCurrentPosition(function(position) {
+   loc=position.coords.latitude+','+position.coords.longitude;
+   $.simpleWeather({
+    location: loc,
+    woeid: '',
+    unit: 'f',
+    success: function(weather) {
+      html = '<div class="weth-row"><h2 class="temp"><i class="icon-'+weather.code+'"></i> '+weather.temp+'&deg;'+weather.units.temp+", "+weather.currently+'</h2>';
+      html += '<li>'+weather.city+', '+weather.region+'</li>';
+      
+      html += '<li>'+weather.wind.direction+' '+weather.wind.speed+' '+weather.units.speed+'</li>';
+  
+      $("#weather").html(html);
+    },
+    error: function(error) {
+      $("#weather").html('<p>'+error+'</p>');
+    }
+  });
+  });
+}else{
+    $.simpleWeather({
+    location: loc,
+    woeid: '',
+    unit: 'f',
+    success: function(weather) {
+      html = '<div class="weth-row"><h2 class="temp"><i class="icon-'+weather.code+'"></i> '+weather.temp+'&deg;'+weather.units.temp+", "+weather.currently+'</h2>';
+      html += '<li>'+weather.city+', '+weather.region+'</li>';
+      
+      html += '<li>'+weather.wind.direction+' '+weather.wind.speed+' '+weather.units.speed+'</li>';
+  
+      $("#weather").html(html);
+    },
+    error: function(error) {
+      $("#weather").html('<p>'+error+'</p>');
+    }
+  });
+}
+
+  
+    </script>
+
+</html>
